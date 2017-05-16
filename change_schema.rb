@@ -5,8 +5,8 @@ require 'aws-sdk-core'
 
 ddb = Aws::DynamoDB::Client.new(
   region: 'ap-northeast-1',
-  access_key_id: ENV["ACCESS_KEY_ID"],
-  secret_access_key: ENV["SECRET_ACCESS_KEY"],
+  access_key_id: ENV["AWS_ACCESS_KEY_ID"],
+  secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
 )
 
 # 全件取得
