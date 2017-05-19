@@ -3,8 +3,6 @@ require "pp"
 
 ddb = Aws::DynamoDB::Client.new(
   region: 'ap-northeast-1',
-  access_key_id: ENV["AWS_ACCESS_KEY_ID"],
-  secret_access_key: ENV["SECRET_AWS_ACCESS_KEY"],
   http_wire_trace: true,
 )
 
