@@ -1,5 +1,9 @@
 #vim: set smartindent ts=2 sts=2 sw=2 et:
 
+# aoyama8
+# id   HASH KEY
+# hoge RANGE KEY
+
 require "aws-sdk"
 require "byebug"
 
@@ -52,20 +56,48 @@ def batch_write_with_retry(ddb, table_name, items, max_retry=10)
   end
 end
 
+def query_all(ddb, table_name, index_name, key_condition_expression, expression_attribute_values)
+  total_count = 0
+  last_evaluated_key = nil
+  while true
+    params = {
+      table_name: table_name,
+      index_name: index_name,
+      key_condition_expression: key_condition_expression,
+      expression_attribute_values: expression_attribute_values,
+    }
+    if last_evaluated_key
+      params[:exclusive_start_key] = last_evaluated_key
+    end
+
+    resp = ddb.query(params)
+    resp.items.each do |item|
+      #puts item["id"]
+    end
+    total_count += resp.items.length
+    puts "#{resp.items.length} items"
+    puts "total = #{total_count}"
+    p resp.last_evaluated_key
+    if resp.last_evaluated_key.nil?
+      break
+    else
+      last_evaluated_key = resp.last_evaluated_key
+    end
+  end
+end
+
 ddb = Aws::DynamoDB::Client.new(endpoint: "http://dynamodb.ap-northeast-1.amazonaws.com")
 
-table_name = "aoyama2"
+table_name = "aoyama8"
 
 case ARGV[0]
 when "insert"
   1000.times do |j|
+    puts "j = #{j}"
     items = (0...1000).map {|i|
       {
-        id: "value#{1000 * j + i}",
-        value1: "0123456789",
-        value2: "0123456789",
-        value3: "0123456789",
-        value4: "0123456789",
+        id: "value#{(1000 * j + i) % 10}",
+        hoge: rand(),
       }
     }
     batch_write_with_retry(ddb, table_name, items)
@@ -87,6 +119,7 @@ when "scan"
     end
     total_count += resp.items.length
     puts "#{resp.items.length} items"
+    puts "total = #{total_count}"
     p resp.last_evaluated_key
     if resp.last_evaluated_key.nil?
       break
@@ -94,7 +127,8 @@ when "scan"
       last_evaluated_key = resp.last_evaluated_key
     end
   end
-  puts "total = #{total_count}"
+when "query"
+  query_all(ddb, table_name, nil, "id = :id AND hoge < :v1", { ":id": "value0", ":v1": 0.0314 })
 when "delete"
   resp = ddb.scan({
     table_name: table_name
