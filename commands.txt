@@ -1,0 +1,1 @@
+aws dynamodb update-table --table-name aoyama1 --provisioned-throughput ReadCapacityUnits=3,WriteCapacityUnits=3

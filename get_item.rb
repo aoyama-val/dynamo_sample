@@ -7,10 +7,16 @@ ddb = Aws::DynamoDB::Client.new(
   secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
 )
 
+started = Time.now
 res = ddb.get_item(
-  table_name: 'skybrain-prod-line-friends',
-  key: {id: "hoge"}
+  table_name: 'aoyama1',
+  key: {id: "hoge2"},
+  consistent_read: true,
 )
 
+ended = Time.now
+
 pp res.item
+
+puts ended - started
 
