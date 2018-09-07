@@ -67,5 +67,5 @@ when "delete"
     })
   end
 else
-  puts "Usage: #{$0} inset|scan|delete"
+  puts "Usage: #{$0} insert|scan|delete"
 end
