@@ -1,29 +1,27 @@
-require 'aws-sdk-core'
+require "aws-sdk-dynamodb"
 require "pp"
 
 ddb = Aws::DynamoDB::Client.new(
-  region: 'ap-northeast-1',
+  region: "ap-northeast-1",
   http_wire_trace: true,
 )
 
-puts ENV["AWS_ACCESS_KEY_ID"]
-puts ENV["SECRET_AWS_ACCESS_KEY"]
-
+# https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/DynamoDB/Client.html#query-instance_method
 res = ddb.query({
-  table_name: "skybrain-prod-line-friends", 
-  index_name: "line_bot_code-index",
-  key_condition_expression: "line_bot_code = :v1", 
+  table_name: "aoyamaFacilities",
+  key_condition_expression: "corpCode = :v1",
   expression_attribute_values: {
-    ":v1" => "hinomaru_dev", 
-  }, 
-  #projection_expression: "SongTitle", 
+    ":v1" => "tsuruga",
+  },
+  scan_index_forward: false, # trueなら昇順、falseなら降順
+  return_consumed_capacity: "TOTAL",  # 消費したキャパシティを返す
 })
 
-#pp res
-
+print "\e[0;31m"
 res.items.each do |item|
   pp item
 end
-
+p res.consumed_capacity
 puts
 puts "#{res.items.length} items"
+print "\e[0m"
