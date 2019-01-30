@@ -15,3 +15,12 @@ ruby import.rb | tee log.txt
 ```
 pip install boto3
 ```
+
+
+## Node.js
+
+```
+npm install aws-sdk
+```
+
+DocumentClientクラスの方が高レベルで扱いやすい。
