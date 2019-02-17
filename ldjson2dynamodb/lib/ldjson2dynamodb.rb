@@ -1,5 +1,6 @@
 ################################################################################
-#   TSVファイルからDynamoDBのテーブルにインポートする
+#   ldjson (Line-delimited JSON, NDJSON, JSONL)ファイルから
+#   DynamoDBのテーブルにインポートする
 #
 #   ・エラーがあった場合はリトライせず、エラーファイルに書き出す
 ################################################################################
@@ -11,14 +12,13 @@ class Tsv2DynamoDB
     @ddb = Aws::DynamoDB::Client.new(**kwargs)
   end
 
-  def import(table_name, column_map, filename, error_filename)
+  def import(table_name, filename, error_filename)
     open(error_filename, "w") do |error_file|
       items = []
       linenum = 0
       IO.foreach(filename, chomp: true) do |line|
         linenum += 1
-        a = line.split("\t")
-        items << column_map.map.with_index {|column_name, i| [column_name, a[i]]}.to_h
+        items << JSON.parse(line)
         if items.length == 25
           batch_write(table_name, items, linenum, error_file)
           items = []
@@ -53,11 +53,5 @@ private
         error_file.flush
       end
     end
-  rescue => ex
-    p ex
-    puts ex.message
-    puts ex.backtrace
-    error_file.puts line
-    exit
   end
 end
