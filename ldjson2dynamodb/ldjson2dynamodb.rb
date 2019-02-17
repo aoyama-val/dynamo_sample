@@ -9,7 +9,7 @@
 
 require "aws-sdk"
 
-class Tsv2DynamoDB
+class Ldjson2DynamoDB
   attr_accessor :capacity_error_count
 
   def initialize(*args, **kwargs)
@@ -84,7 +84,7 @@ if __FILE__ == $0
 
     started = Time.now
 
-    td = Tsv2DynamoDB.new
+    td = Ldjson2DynamoDB.new
 
     begin
       td.import(table_name, filename, skip)
