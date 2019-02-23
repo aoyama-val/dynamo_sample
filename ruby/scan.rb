@@ -1,7 +1,7 @@
-require 'aws-sdk-core'
+require 'aws-sdk'
 require "pp"
 
-table_name = "development_Transport"
+table_name = ARGV[0] || (exit 1)
 
 ddb = Aws::DynamoDB::Client.new(
   region: 'ap-northeast-1',
@@ -13,9 +13,11 @@ puts ENV["SECRET_AWS_ACCESS_KEY"]
 
 result = ddb.scan(
   table_name: table_name,
-  select: "COUNT",
+  #select: "COUNT",
   #select: "ALL_ATTRIBUTES",
 )
 
-p result
-#puts "Records: " + "#{result.items.count}"
+result.items.each do |item|
+  pp item
+end
+puts "Record count: #{result.items.count}"
